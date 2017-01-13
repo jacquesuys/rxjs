@@ -36,10 +36,10 @@ gulp.task("watch:scripts:client", () => {
 
 gulp.task("watch:scripts", gulp.parallel(
 	"watch:scripts:client",
-	"watch:scripts:server"))
+	"watch:scripts:server"));
 
 let bundlers = {};
-function initBundlerWatch(file) {
+let initBundlerWatch = (file) => {
 	if (bundlers.hasOwnProperty(file))
 		return;
 		
@@ -49,22 +49,22 @@ function initBundlerWatch(file) {
 	const watcher = watchify(bundler);
 	const filename = path.basename(file);
 	
-	function bundle() {
-		return bundler
-			.bundle()
-			.on("error", error => console.error(error))
-			.pipe(source(filename))
-			.pipe(gulp.dest("./public/build"));
-	}
+	let bundle = () => 
+		bundler
+            .bundle()
+            .on("error", error => console.error(error))
+            .pipe(source(filename))
+            .pipe(gulp.dest("./public/build"));
+	
 	
 	watcher.on("update", bundle);
 	watcher.on("time", time => console.log(`Built client in ${time}ms`));
 	
 	bundle();
-}
+};
 
-function createBundler(file) {
+let createBundler = (file) => {
 	const bundler = browserify(file);
 	bundler.transform(babelify);
 	return bundler;
-}
+};
